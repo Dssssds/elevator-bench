@@ -1,0 +1,62 @@
+name: Build and Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Build all model folders
+        run: |
+          # Dynamically find all folders with index.html
+          for folder in */; do
+            folder=${folder%/}
+            if [ -f "$folder/index.html" ]; then
+              echo "Building $folder..."
+              cd "$folder"
+              mkdir -p ./dist
+              bun build ./index.html --outdir ./dist
+              cd ..
+            fi
+          done
+      
+      - name: Create top-level dist directory
+        run: |
+          mkdir -p dist
+          
+          # Copy each model's dist folder
+          for folder in */; do
+            folder=${folder%/}
+            if [ -f "$folder/index.html" ]; then
+              echo "Copying $folder/dist to dist/$folder"
+              cp -rfv "$folder/dist" "dist/$folder"
+            fi
+          done
+      
+      - name: Create index.html
+        run: python3 generate_index.py
+      
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
