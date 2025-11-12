@@ -1,0 +1,17 @@
+{
+  "config": {
+    "tool": "opencode",
+    "tool_mode": "build",
+    "model": "big-pickle",
+    "provider": "zen",
+    "port": "8703"
+  },
+  "results": {
+    "context_window": "204800",
+    "context_fill": "35670",
+    "dollar_cost": "0.00",
+    "time_taken": "00:01:45",
+    "tokens_sent": "",
+    "tokens_received": ""
+  }
+}
