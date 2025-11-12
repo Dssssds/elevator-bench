@@ -23,36 +23,8 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      
-      - name: Build all model folders
-        run: |
-          # Dynamically find all folders with index.html
-          for folder in */; do
-            folder=${folder%/}
-            if [ -f "$folder/index.html" ]; then
-              echo "Building $folder..."
-              cd "$folder"
-              mkdir -p ./dist
-              bun build ./index.html --outdir ./dist
-              cd ..
-            fi
-          done
-      
-      - name: Create top-level dist directory
-        run: |
-          mkdir -p dist
-          
-          # Copy each model's dist folder
-          for folder in */; do
-            folder=${folder%/}
-            if [ -f "$folder/index.html" ]; then
-              echo "Copying $folder/dist to dist/$folder"
-              cp -rfv "$folder/dist" "dist/$folder"
-            fi
-          done
-      
-      - name: Create index.html
-        run: python3 generate_index.py
+      - name: Create demo site
+        run: bun src/generate.ts
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
