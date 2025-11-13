@@ -113,6 +113,7 @@ async function main(): Promise<void> {
           };
           results?: {
             time_taken?: unknown;
+            dollar_cost?: unknown;
           };
         };
 
@@ -139,6 +140,10 @@ async function main(): Promise<void> {
         const timeTaken = pickString(results.time_taken);
         if (timeTaken) {
           secondarySections.push(`Run Time: ${timeTaken}`);
+        }
+        const dollarCost = pickString(results.dollar_cost);
+        if (dollarCost) {
+          secondarySections.push(`Cost: ${dollarCost}`);
         }
       } catch (error) {
         console.warn(`Could not read info.json for ${slug}:`, error);
