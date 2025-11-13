@@ -9,7 +9,7 @@
   "results": {
     "context_window": "256000",
     "context_fill": "41756",
-    "dollar_cost": "9x",
+    "dollar_cost": "2x",
     "time_taken": "00:10:00",
     "tokens_sent": "",
     "tokens_received": ""

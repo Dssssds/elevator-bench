@@ -34,6 +34,25 @@ function pickString(value: unknown): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
+function escapeHtmlAttr(value: string): string {
+  return value.replace(/[&"'<>]/g, (char) => {
+    switch (char) {
+      case "&":
+        return "&amp;";
+      case '"':
+        return "&quot;";
+      case "'":
+        return "&#39;";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      default:
+        return char;
+    }
+  });
+}
+
 async function main(): Promise<void> {
   const rootDir = process.cwd();
   const templatePath = join(rootDir, "src", "index.template.html");
@@ -97,8 +116,11 @@ async function main(): Promise<void> {
     await cp(modelDistDir, targetDir, { recursive: true });
 
     let displayName = toDisplayName(slug);
+    let modelName = displayName;
     const descriptionSections: string[] = [];
     const secondarySections: string[] = [];
+    let toolName: string | null = null;
+    let modeName: string | null = null;
 
     const infoPath = join(modelRoot, "info.json");
     if (await pathExists(infoPath)) {
@@ -118,19 +140,22 @@ async function main(): Promise<void> {
         };
 
         const config = info?.config ?? {};
-        const modelName = pickString(config.model);
-        const toolName = pickString(config.tool);
-        const modeName = pickString(config.tool_mode);
+        const modelNameCandidate = pickString(config.model);
+        const toolNameCandidate = pickString(config.tool);
+        const modeNameCandidate = pickString(config.tool_mode);
         const providerName = pickString(config.provider);
 
-        if (modelName) {
-          displayName = modelName;
+        if (modelNameCandidate) {
+          displayName = modelNameCandidate;
+          modelName = modelNameCandidate;
         }
-        if (toolName) {
-          descriptionSections.push(`Tool: ${toolName}`);
+        if (toolNameCandidate) {
+          toolName = toolNameCandidate;
+          descriptionSections.push(`Tool: ${toolNameCandidate}`);
         }
-        if (modeName) {
-          descriptionSections.push(`Mode: ${modeName}`);
+        if (modeNameCandidate) {
+          modeName = modeNameCandidate;
+          descriptionSections.push(`Mode: ${modeNameCandidate}`);
         }
         if (providerName) {
           secondarySections.push(`Provider: ${providerName}`);
@@ -150,6 +175,9 @@ async function main(): Promise<void> {
       }
     }
 
+    // Ensure modelName aligns with the final display name for analytics consistency
+    modelName = modelName ?? displayName;
+
     const descriptionLines = [
       descriptionSections.length > 0
         ? descriptionSections.join(" | ")
@@ -161,7 +189,15 @@ async function main(): Promise<void> {
       .map((line) => `                <div class="model-description">${line}</div>`)
       .join("\n");
 
-    const linkHtml = `            <a href="${slug}/" class="model-card">
+    const dataAttributes = [
+      `data-model-name="${escapeHtmlAttr(modelName)}"`,
+      toolName ? `data-tool-name="${escapeHtmlAttr(toolName)}"` : "",
+      modeName ? `data-tool-mode="${escapeHtmlAttr(modeName)}"` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    const linkHtml = `            <a href="${slug}/" class="model-card" ${dataAttributes}>
                 <div class="model-name">${displayName} <span class="arrow">→</span></div>
 ${descriptionHtml}
             </a>`;

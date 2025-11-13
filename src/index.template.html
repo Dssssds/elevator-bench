@@ -83,5 +83,24 @@
         defaults: '2025-05-24',
         person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
     })
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var cards = document.querySelectorAll('.model-card');
+        cards.forEach(function (card) {
+            card.addEventListener('click', function () {
+                var posthogClient = window.posthog;
+                if (!posthogClient || typeof posthogClient.capture !== 'function') {
+                    return;
+                }
+
+                var dataset = card.dataset;
+                posthogClient.capture('open_output', {
+                    model_name: dataset.modelName || null,
+                    tool_name: dataset.toolName || null,
+                    tool_mode: dataset.toolMode || null,
+                });
+            });
+        });
+    });
 </script>
 </html>
