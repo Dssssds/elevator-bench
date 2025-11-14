@@ -19,7 +19,7 @@ function initializeUI(): void {
 
     const floorLabel = document.createElement('div');
     floorLabel.className = 'floor-label';
-    floorLabel.textContent = `Floor ${i}`;
+    floorLabel.textContent = `楼层 ${i}`;
 
     const floorButtons = document.createElement('div');
     floorButtons.className = 'floor-buttons';
@@ -65,7 +65,7 @@ function initializeUI(): void {
 
     const elevatorLabel = document.createElement('div');
     elevatorLabel.className = 'elevator-label';
-    elevatorLabel.textContent = `E${i}`;
+    elevatorLabel.textContent = `电梯 ${i}`;
 
     const elevatorFloor = document.createElement('div');
     elevatorFloor.className = 'elevator-floor';
@@ -108,7 +108,7 @@ function createControlPanels(): void {
 
     const panelTitle = document.createElement('div');
     panelTitle.className = 'panel-title';
-    panelTitle.textContent = `Elevator ${i} Controls`;
+    panelTitle.textContent = `电梯 ${i} 控制面板`;
 
     const buttonsGrid = document.createElement('div');
     buttonsGrid.className = 'panel-buttons';

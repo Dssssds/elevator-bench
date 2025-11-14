@@ -72,11 +72,11 @@ async function main(): Promise<void> {
         distIndexPath,
         template.replace(
           TEMPLATE_PLACEHOLDER,
-          "            <p class=\"model-description\">No outputs found.</p>"
+          "            <div class=\"no-models\">未找到任何模型输出</div>"
         ),
         "utf8"
       );
-      console.warn("No outputs directory found. Generated placeholder index.");
+      console.warn("未找到 outputs 目录，已生成占位索引页。");
       return;
     }
     throw error;
@@ -101,12 +101,12 @@ async function main(): Promise<void> {
         await mkdir(modelDistDir, { recursive: true });
         await runBuild(modelRoot);
       } catch (error) {
-        console.error(`Build failed for ${slug}:`, error);
+        console.error(`构建 ${slug} 失败:`, error);
         continue;
       }
 
       if (!(await pathExists(distIndexPath))) {
-        console.warn(`Skipping ${slug}: build did not create dist/index.html.`);
+        console.warn(`跳过 ${slug}: 构建未生成 dist/index.html`);
         continue;
       }
     }
@@ -117,10 +117,11 @@ async function main(): Promise<void> {
 
     let displayName = toDisplayName(slug);
     let modelName = displayName;
-    const descriptionSections: string[] = [];
-    const secondarySections: string[] = [];
     let toolName: string | null = null;
     let modeName: string | null = null;
+    let providerName: string | null = null;
+    let timeTaken: string | null = null;
+    let dollarCost: string | null = null;
 
     const infoPath = join(modelRoot, "info.json");
     if (await pathExists(infoPath)) {
@@ -143,7 +144,7 @@ async function main(): Promise<void> {
         const modelNameCandidate = pickString(config.model);
         const toolNameCandidate = pickString(config.tool);
         const modeNameCandidate = pickString(config.tool_mode);
-        const providerName = pickString(config.provider);
+        providerName = pickString(config.provider);
 
         if (modelNameCandidate) {
           displayName = modelNameCandidate;
@@ -151,43 +152,63 @@ async function main(): Promise<void> {
         }
         if (toolNameCandidate) {
           toolName = toolNameCandidate;
-          descriptionSections.push(`Tool: ${toolNameCandidate}`);
         }
         if (modeNameCandidate) {
           modeName = modeNameCandidate;
-          descriptionSections.push(`Mode: ${modeNameCandidate}`);
-        }
-        if (providerName) {
-          secondarySections.push(`Provider: ${providerName}`);
         }
 
         const results = info?.results ?? {};
-        const timeTaken = pickString(results.time_taken);
-        if (timeTaken) {
-          secondarySections.push(`Run Time: ${timeTaken}`);
-        }
-        const dollarCost = pickString(results.dollar_cost);
-        if (dollarCost) {
-          secondarySections.push(`Cost: ${dollarCost}`);
-        }
+        timeTaken = pickString(results.time_taken);
+        dollarCost = pickString(results.dollar_cost);
       } catch (error) {
-        console.warn(`Could not read info.json for ${slug}:`, error);
+        console.warn(`无法读取 ${slug} 的 info.json:`, error);
       }
     }
 
     // Ensure modelName aligns with the final display name for analytics consistency
     modelName = modelName ?? displayName;
 
-    const descriptionLines = [
-      descriptionSections.length > 0
-        ? descriptionSections.join(" | ")
-        : "Elevator simulator implementation",
-      ...secondarySections.map((section) => section),
-    ].filter(Boolean);
+    // Generate badges HTML
+    const badgesHtml: string[] = [];
+    if (toolName) {
+      badgesHtml.push(`<span class="badge badge-tool">${toolName}</span>`);
+    }
+    if (modeName) {
+      badgesHtml.push(`<span class="badge badge-mode">${modeName}</span>`);
+    }
+    if (providerName) {
+      badgesHtml.push(`<span class="badge badge-provider">${providerName}</span>`);
+    }
 
-    const descriptionHtml = descriptionLines
-      .map((line) => `                <div class="model-description">${line}</div>`)
-      .join("\n");
+    const badgesSection = badgesHtml.length > 0
+      ? `                <div class="badges">\n                    ${badgesHtml.join('\n                    ')}\n                </div>`
+      : '';
+
+    // Generate metrics HTML
+    const metricsHtml: string[] = [];
+    if (timeTaken) {
+      metricsHtml.push(`                    <div class="metric">
+                        <div class="metric-label">运行时间</div>
+                        <div class="metric-value">${timeTaken}</div>
+                    </div>`);
+    }
+    if (dollarCost !== null) {
+      const cost = parseFloat(dollarCost);
+      let costClass = 'cost-medium';
+      if (cost === 0) costClass = 'cost-free';
+      else if (cost < 0.2) costClass = 'cost-low';
+      else if (cost > 0.5) costClass = 'cost-high';
+      
+      const costDisplay = cost === 0 ? '免费' : `$${dollarCost}`;
+      metricsHtml.push(`                    <div class="metric">
+                        <div class="metric-label">成本</div>
+                        <div class="metric-value ${costClass}">${costDisplay}</div>
+                    </div>`);
+    }
+
+    const metricsSection = metricsHtml.length > 0
+      ? `\n                <div class="metrics">\n${metricsHtml.join('\n')}\n                </div>`
+      : '';
 
     const dataAttributes = [
       `data-model-name="${escapeHtmlAttr(modelName)}"`,
@@ -198,8 +219,11 @@ async function main(): Promise<void> {
       .join(" ");
 
     const linkHtml = `            <a href="${slug}/" class="model-card" ${dataAttributes}>
-                <div class="model-name">${displayName} <span class="arrow">→</span></div>
-${descriptionHtml}
+                <div class="model-header">
+                    <div class="model-name">${displayName}</div>
+                    <span class="arrow">→</span>
+                </div>
+${badgesSection}${metricsSection}
             </a>`;
     modelLinks.push(linkHtml);
   }
@@ -207,11 +231,11 @@ ${descriptionHtml}
   const renderedLinks =
     modelLinks.length > 0
       ? modelLinks.join("\n              \n")
-      : "            <p class=\"model-description\">No builds available.</p>";
+      : "            <div class=\"no-models\">暂无可用的构建版本</div>";
 
   await writeFile(distIndexPath, template.replace(TEMPLATE_PLACEHOLDER, renderedLinks), "utf8");
 
-  console.log(`Generated index.html with ${modelLinks.length} model links`);
+  console.log(`✅ 已生成 index.html，包含 ${modelLinks.length} 个模型链接`);
 }
 
 async function runBuild(cwd: string): Promise<void> {

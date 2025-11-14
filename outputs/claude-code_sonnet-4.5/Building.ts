@@ -168,7 +168,7 @@ export class Building {
         const destinationsDisplay = elevatorElement.querySelector('.elevator-destinations');
 
         if (floorDisplay) {
-          floorDisplay.textContent = `Floor ${elevator.currentFloor}`;
+          floorDisplay.textContent = `楼层 ${elevator.currentFloor}`;
         }
 
         if (statusDisplay) {

@@ -1,60 +1,59 @@
-# Elevator Simulator
+# 电梯模拟器
 
-We want to build a Elevator Simulator that simulates the operation of elevators in a building.
+我们需要构建一个电梯模拟器来模拟建筑物中电梯的运行。
 
-### Features:
-The Elevator Simulator should have the following features:
+### 功能特性：
+电梯模拟器应具备以下功能：
 
-1. Each floor should have up and down buttons to request an elevator. The top and bottom floors will only have one button (down for top floor, up for bottom floor).
+1. 每层楼应有上下按钮来请求电梯。顶层和底层只有一个按钮（顶层只有下行按钮，底层只有上行按钮）。
 
-2. Floors start from 0 at bottom (ground floor) to N-1 at top (N is total number of floors).
+2. 楼层从底部的 0 层（地面层）开始，到顶部的 N-1 层（N 是总楼层数）。
 
-3. Inside each elevator, there should be buttons for each floor to select the desired destination.
+3. 每部电梯内部应有各楼层的按钮，用于选择目标楼层。
 
-4. The simulation begins with all elevators idle at the ground floor (floor 0).
+4. 模拟开始时，所有电梯都处于空闲状态，停在地面层（0 层）。
 
-5. The simulation should show the animation of the elevators moving from floor to floor.
-The elevator logic should optimise for the following: 
+5. 模拟应展示电梯在楼层间移动的动画。
+电梯逻辑应针对以下方面进行优化：
 
-  1. When an elevator is requested from a floor, the closest idle elevator travelling in the direction of the request should respond first.
+  1. 当某层请求电梯时，最近的、沿请求方向行驶的空闲电梯应优先响应。
 
-  2. If all elevators are busy, the request should be queued and assigned to the next available elevator.
+  2. 如果所有电梯都在忙碌中，请求应进入队列，并分配给下一个可用的电梯。
 
-  3. Elevator should not change direction until all requests in the current direction are fulfilled, or it reaches the end of the building on either side.
+  3. 电梯在当前方向的所有请求都完成之前，或到达建筑物任一端之前，不应改变方向。
 
-### Defaults: 
-For the purpose of this simulation we will consider this configuration as defaults (should all be configurable constants): 
+### 默认配置：
+在此模拟中，我们将使用以下默认配置（所有配置都应是可配置的常量）：
 
-1. Floors in building: 10 (numbered from 0 to 9)
-2. Number of Elevators: 4 (numbered from 0 to 3)
+1. 建筑楼层数：10 层（编号从 0 到 9）
+2. 电梯数量：4 部（编号从 0 到 3）
 
 
-### Code Structure: 
+### 代码结构：
 
-Create 3 main files: 
+创建 3 个主要文件：
 
-1. index.html - This file will contain the HTML structure of the simulator. You can create divs for floors, elevators, and buttons here if you need.
-  1. Include the model, tool, and provider information from info.json
-  at the top after title in this HTML page.
+1. index.html - 此文件包含模拟器的 HTML 结构。如需要，可以在此创建楼层、电梯和按钮的 div。
+  1. 在此 HTML 页面的标题后面，包含来自 info.json 的模型、工具和提供商信息。
 
-2. styles.css - This file will contain the CSS styles for the simulator to make it visually appealing. Use plain CSS, no SASS/SCSS.
+2. styles.css - 此文件包含模拟器的 CSS 样式，使其视觉效果更佳。使用纯 CSS，不使用 SASS/SCSS。
 
-3. script.ts - This file will contain the TypeScript code to handle the elevator logic, button clicks, and state management of the elevators.
-  1. Creating further .ts files for Elevator, Floor, and Building classes is encouraged for better organization.
-  2. Make sure everything is imported directly/indirectly from script.ts so that bun build will include them in the final output.
+3. script.ts - 此文件包含 TypeScript 代码，用于处理电梯逻辑、按钮点击和电梯状态管理。
+  1. 建议为 Elevator、Floor 和 Building 类创建额外的 .ts 文件，以便更好地组织代码。
+  2. 确保所有内容都直接或间接从 script.ts 导入，以便 bun build 将它们包含在最终输出中。
 
-### Project Setup
+### 项目设置
 
-We want this project to run & build using bun, without any package.json or node_modules dependencies. 
+我们希望此项目使用 bun 运行和构建，无需 package.json 或 node_modules 依赖。
 
-We should be able to run the project using:
+应能够使用以下命令运行项目：
 
 ```sh 
 bunx serve -p XXXX
 ```
-Where port number `XXXX` is picked from info.json 
+其中端口号 `XXXX` 从 info.json 中获取
 
-We should be able to build the project using:
+应能够使用以下命令构建项目：
 ```sh
 mkdir -p ./dist
 bun build ./index.html --outdir ./dist

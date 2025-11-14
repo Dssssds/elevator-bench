@@ -1,108 +1,108 @@
-# Elevator Simulator Evaluation Project
+# 电梯模拟器评估项目
 
-## Project Overview
+## 项目概述
 
-This repository contains an elevator simulator implementation created as part of an evaluation benchmark for testing various coding tools and models. The project serves as a standardized task to evaluate the capabilities of different AI coding assistants and development tools.
+本仓库包含一个电梯模拟器实现，作为测试各种编码工具和模型的评估基准的一部分。该项目作为一个标准化任务，用于评估不同 AI 编码助手和开发工具的能力。
 
-The simulator implements a multi-floor elevator system with visual representation, providing a practical scenario for assessing code generation, architectural design, and implementation skills.
+该模拟器实现了一个带视觉表现的多层电梯系统，为评估代码生成、架构设计和实现技能提供了一个实际场景。
 
-## Elevator Simulator Requirements
+## 电梯模拟器需求
 
-The elevator simulator implements the following features:
+电梯模拟器实现以下功能：
 
-- **Floor Controls**: Up/down buttons on each floor to request elevator service
-- **Elevator Controls**: Floor selection buttons inside the elevator cabin
-- **Visual Representation**: Animated display showing elevators moving between floors
-- **Realistic Behavior**: Proper elevator logic including door operations, movement timing, and request queuing
+- **楼层控制**：每层楼有上/下按钮来请求电梯服务
+- **电梯控制**：电梯轿厢内有楼层选择按钮
+- **视觉表现**：动画显示电梯在楼层间移动
+- **真实行为**：适当的电梯逻辑，包括门的操作、移动时间和请求排队
 
-## Technology Stack
+## 技术栈
 
-- **Frontend**: HTML5, CSS3 (with animations)
-- **Logic**: TypeScript
-- **No Framework Dependencies**: Pure implementation without external libraries
+- **前端**：HTML5、CSS3（带动画）
+- **逻辑**：TypeScript
+- **无框架依赖**：纯实现，无外部库
 
-## Project Structure
+## 项目结构
 
 ```
 .
-├── index.html          # Main HTML file with elevator UI
-├── style.css           # Stylesheet for visual representation
-├── script.ts           # TypeScript logic for elevator simulation
-├── PROMPT.md           # Original evaluation prompt and requirements
-├── README.md           # This file
-└── .gitignore          # Git ignore rules
+├── index.html          # 带电梯 UI 的主 HTML 文件
+├── style.css           # 视觉表现的样式表
+├── script.ts           # 电梯模拟的 TypeScript 逻辑
+├── PROMPT.md           # 原始评估提示和需求
+├── README.md           # 本文件
+└── .gitignore          # Git 忽略规则
 ```
 
-## Model Outputs
+## 模型输出
 
-The `/outputs` folder contains the results from different coding tools and models used to generate implementations of the elevator simulator.
+`/outputs` 文件夹包含使用不同编码工具和模型生成的电梯模拟器实现结果。
 
-### Naming Convention
+### 命名规范
 
-All outputs follow the naming pattern `<tool>_<model>` where:
-- `tool` represents the coding assistant or development tool used
-- `model` represents the specific AI model or version used
+所有输出遵循命名模式 `<工具>_<模型>`，其中：
+- `工具` 代表使用的编码助手或开发工具
+- `模型` 代表使用的特定 AI 模型或版本
 
-### Examples
+### 示例
 
-- `kilo_minimax-m2` (minimax m2 model using kilo code)
-- `cursor_claude-sonnet-45` (claude sonnet 4.5 using cursor)
+- `kilo_minimax-m2`（使用 kilo code 的 minimax m2 模型）
+- `cursor_claude-sonnet-45`（使用 cursor 的 claude sonnet 4.5）
 
 
-## Evaluation Details
+## 评估详情
 
-This project serves as a benchmark for evaluating:
-- Code generation capabilities
-- Understanding of state management
-- Implementation of algorithms and logic
-- UI/UX implementation skills
-- Code organization and architecture
+此项目作为基准用于评估：
+- 代码生成能力
+- 状态管理理解
+- 算法和逻辑实现
+- UI/UX 实现技能
+- 代码组织和架构
 
-The original evaluation prompt can be found in [PROMPT.md](PROMPT.md).
+原始评估提示可在 [PROMPT.md](PROMPT.md) 中找到。
 
-## Implementation Notes
+## 实现说明
 
-The simulator implements a realistic elevator algorithm that:
-- Processes requests in an efficient manner
-- Handles multiple simultaneous requests
-- Shows visual feedback for elevator movement
-- Manages door open/close operations
-- Tracks elevator state (moving, idle, door open/closed)
+该模拟器实现了一个真实的电梯算法：
+- 以高效方式处理请求
+- 处理多个同时请求
+- 显示电梯移动的视觉反馈
+- 管理门的开/关操作
+- 跟踪电梯状态（移动中、空闲、门开/关）
 
-## Customization
+## 自定义
 
-You can modify the following parameters in the TypeScript code:
-- Number of floors
-- Number of elevators
-- Elevator speed
-- Door operation timing
+你可以在 TypeScript 代码中修改以下参数：
+- 楼层数量
+- 电梯数量
+- 电梯速度
+- 门操作时间
 
-## Browser Support
+## 浏览器支持
 
-The simulator works in all modern browsers that support:
-- ES6 JavaScript features
-- CSS animations
-- Modern DOM APIs
+该模拟器在所有支持以下功能的现代浏览器中运行：
+- ES6 JavaScript 特性
+- CSS 动画
+- 现代 DOM API
 
-Tested browsers:
+已测试的浏览器：
 - Chrome 70+
 - Firefox 65+
 - Safari 12+
 - Edge 79+
 
-## Development
+## 开发
 
-To modify the simulator:
+要修改模拟器：
 
-1. Edit `script.ts` for logic changes
-2. Update `style.css` for visual changes
-3. Modify `index.html` for structural changes
+1. 编辑 `script.ts` 进行逻辑更改
+2. 更新 `style.css` 进行视觉更改
+3. 修改 `index.html` 进行结构更改
 
-TypeScript compilation (if modifying):
+TypeScript 编译（如果修改）：
 ```bash
 tsc script.ts --outDir .
 ```
 
-## License
+## 许可证
 
-This project is provided as part of an evaluation benchmark and is available for use in accordance with the terms specified in the repository.
+此项目作为评估基准的一部分提供，可根据仓库中指定的条款使用。
